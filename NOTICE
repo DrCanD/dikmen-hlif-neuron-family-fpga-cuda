@@ -1,0 +1,50 @@
+H-LIF Neuron Family — FPGA & CUDA Reference Implementation
+Copyright 2026 İsmail Can Dikmen
+
+This product includes software developed at
+İstinye University, Istanbul, Türkiye.
+
+If you use this software in academic work, you MUST cite it.
+See CITATION.cff for the recommended citation format.
+
+============================================================
+Patent notice
+============================================================
+
+This software is the reference implementation for:
+
+    TÜRKPATENT application 2026/007632
+    "Hazard Function-Based Spiking Neuron Family, Liquid Extension,
+     and N-Island Heterogeneous Neuromorphic Processing System"
+    Filed: 14.05.2026
+    Applicant: İstinye University (İstinye Üniversitesi)
+    Inventor: İsmail Can Dikmen
+
+A companion patent application covers the heterogeneous SoC system
+that uses TH-LIF as a low-power watchdog:
+
+    TÜRKPATENT application 2026/004809
+    Filed: 31.03.2026
+    Applicant: İstinye University
+
+The Apache License 2.0 under which this software is distributed
+includes an explicit patent license grant from contributors to users
+of the software, subject to the terms of that license. Independent
+of that grant, the patent applications above are the property of
+İstinye University; commercial use of the patented inventions in
+jurisdictions where the applications proceed to grant should be
+coordinated through the İstinye University Technology Transfer
+Office (İstinye TTO).
+
+============================================================
+Provenance
+============================================================
+
+This repository is the patent-scoped subset of the broader
+spiking neuron library at:
+
+    https://github.com/DrCanD/dikmen-spiking-neurons
+
+That repository contains 39 neuron models across 8 families;
+this one contains the 17 models covered by 2026/007632 plus the
+TH-LIF CUDA kernel and Arty A7-35T FPGA measurements.

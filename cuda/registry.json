@@ -1,0 +1,123 @@
+{
+  "database": {
+    "name": "hlif-cuda-registry",
+    "description": "CUDA kernel registry for H-LIF family neuron models. Metadata for each kernel: mathematical reference, hyperparameters, design constraints, project usage, cross-reference to FPGA database, patent provenance. The .cu and .py implementations live in cuda/kernels/ and cuda/wrappers/ respectively.",
+    "owner": "Can Dikmen",
+    "affiliation": "İstinye University, Department of Electrical and Electronics Engineering",
+    "patent": "TÜRKPATENT 2026/007632",
+    "version": "1.0.0",
+    "schema_version": "1.0",
+    "created": "2026-05-03",
+    "last_updated": "2026-05-15",
+    "structure_notes": {
+      "kernels": "Raw CUDA C source (.cu) under cuda/kernels/. Canonical version, human-readable, version-controlled.",
+      "wrappers": "Python autograd Function + nn.Module wrappers (.py) under cuda/wrappers/. Kernel source embedded inline for self-containment in Colab. Must stay in sync with the canonical .cu.",
+      "cross_reference": "model_name values match entries in fpga/measurements.json (same neuron model, software speed vs hardware energy)."
+    }
+  },
+
+  "kernels": {
+    "th_lif_v1": {
+      "model_name": "TH-LIF",
+      "model_full_name": "Tunneling-Hazard Leaky Integrate-and-Fire",
+      "variant": "exponential",
+      "version": "1.0",
+      "date_added": "2026-05-03",
+      "kernel_files": ["cuda/kernels/th_lif_v1.cu"],
+      "wrapper_files": ["cuda/wrappers/th_lif_v1.py"],
+
+      "math": {
+        "lambda": "lam0 * exp(-kappa * (phi0 - eta * v))",
+        "p_spike": "1 - exp(-lambda)",
+        "spike_rule": "p >= 0.5 (deterministic threshold)",
+        "membrane_update": "v_next = beta*v + I_in - spike*V_th (leaky + soft reset)",
+        "natural_gradient": "dp/dv = exp(-lambda) * lambda * kappa * eta",
+        "surrogate_used": false,
+        "note": "Natural hazard gradient is analytic, no surrogate function needed."
+      },
+
+      "hyperparameters_default": {
+        "beta": 0.95,
+        "threshold": 1.0,
+        "lam0": 0.1,
+        "kappa": 2.0,
+        "eta": 1.5,
+        "phi0": 1.0,
+        "gain": 1.0
+      },
+
+      "learnability": {
+        "projection_weights": "learned (nn.Linear inside CUDATHLIF)",
+        "hazard_parameters": "FIXED at init time in this kernel",
+        "note": "Learnable hazard parameters reserved for L-TH-LIF (separate kernel, to be added). This kernel matches PP-SNN v4 and battery SoH paper conventions."
+      },
+
+      "design_constraints": [
+        "float32 only (AMP/half-precision forbidden, expf overflow)",
+        "Tensor shape (B, T, N) row-major mandatory",
+        "CUDA device required, no CPU fallback",
+        "Reset gradient breaking active (gv=0 after spike, BPTT does not cross spike events)",
+        "Exponent clamped to [-10, 10] in forward, dp/dv clamped to [0, 2], gs clamped to [-1, 1]"
+      ],
+
+      "performance_characteristics": {
+        "fused_bptt": true,
+        "single_launch_per_direction": true,
+        "memory_complexity": "O(B*T*N) per direction (spk + dp_dv saved for backward)",
+        "deterministic_output": true
+      },
+
+      "used_in_projects": [
+        {"name": "Dolphin SNN Paper 1 (PP-SNN v4)", "date": "2026-04-29", "role": "click pathway ICI stage (deferred to Paper 2)"},
+        {"name": "Battery SoH paper R2 (TH-LIF expert encoder)", "date": "2026-05-03", "role": "primary encoder, Severson dataset"},
+        {"name": "NeuroSentinel revision (Exp E)", "date": "2026-05-03", "role": "primary encoder, FGSM detection"}
+      ],
+
+      "cross_reference_fpga": {
+        "matching_neuron_id": "th_lif_exp_2026_04",
+        "note": "Same neuron model. fpga/measurements.json has hardware energy/resource numbers (171 LUTs, 240 pJ/step upper bound on Arty A7-35T). This registry has software speed numbers. Both reference the same mathematical formulation."
+      },
+
+      "patent": {
+        "office": "TÜRKPATENT",
+        "primary_application_no": "2026/007632",
+        "primary_status": "filed 14.05.2026 (neuron family, liquid extension, N-island MoE)",
+        "secondary_application_no": "2026/004809",
+        "secondary_status": "filed 31.03.2026 (hybrid heterogeneous SoC system)",
+        "note": "TH-LIF as a neuron model is covered by 2026/007632 (claim 2). The hybrid SoC system that uses TH-LIF as a neuromorphic watchdog is covered by 2026/004809."
+      },
+
+      "source_origin": {
+        "extracted_from": "Dolphin notebook Cell 65",
+        "drive_path": "/content/drive/MyDrive/Research/dolphin_snn/Dolphin__2_.ipynb",
+        "first_use_date": "2026-04-29"
+      }
+    }
+  },
+
+  "_template_new_kernel": {
+    "_aciklama": "Yeni nöron kernel'i eklerken bu template'i kernels dict'ine yeni anahtarla ekle. Önce cuda/kernels/<id>.cu ve cuda/wrappers/<id>.py dosyalarını oluştur.",
+    "model_name": "string",
+    "model_full_name": "string",
+    "variant": "string",
+    "version": "string",
+    "date_added": "yyyy-mm-dd",
+    "kernel_files": ["cuda/kernels/<id>.cu"],
+    "wrapper_files": ["cuda/wrappers/<id>.py"],
+    "math": {
+      "lambda_or_voltage_dynamics": "",
+      "spike_rule": "",
+      "membrane_update": "",
+      "gradient_method": "",
+      "surrogate_used": false
+    },
+    "hyperparameters_default": {},
+    "learnability": {"projection_weights": "", "hazard_parameters": ""},
+    "design_constraints": [],
+    "performance_characteristics": {},
+    "used_in_projects": [],
+    "cross_reference_fpga": {"matching_neuron_id": "", "note": ""},
+    "patent": {},
+    "source_origin": {}
+  }
+}

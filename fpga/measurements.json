@@ -1,0 +1,335 @@
+{
+  "database": {
+    "name": "hlif-fpga-measurements",
+    "description": "FPGA validation results database for H-LIF family neuron models. Citable source of synthesis, power, and energy metrics for the patent and manuscripts. TÜRKPATENT 2026/007632.",
+    "owner": "Can Dikmen",
+    "affiliation": "Istinye University, Department of Electrical and Electronics Engineering",
+    "version": "1.0.0",
+    "schema_version": "1.0",
+    "created": "2026-05-03",
+    "last_updated": "2026-05-15",
+    "structure_notes": {
+      "donanimlar": "Dict keyed by hardware id. Each entry describes a board/platform once; multiple neuron measurements reference it via donanim_id (foreign key).",
+      "noronlar": "Array of measurements. Each entry is one neuron model on one platform at one date. Same neuron on different platforms or different variants becomes separate entries.",
+      "units": "All numerical fields carry units in their key name (power_mw, energy_per_step_pj, clock_freq_mhz, etc.) to prevent unit ambiguity."
+    },
+    "patent": "TÜRKPATENT 2026/007632"
+  },
+  "donanimlar": {
+    "arty_a7_35t": {
+      "board": "Digilent Arty A7-35T",
+      "fpga_part": "xc7a35ticsg324-1L",
+      "family": "Xilinx Artix-7",
+      "speed_grade": "-1L",
+      "process_node_nm": 28,
+      "available_resources": {
+        "lut": 20800,
+        "ff": 41600,
+        "dsp48e1": 90,
+        "bram18": 100,
+        "bram36_equivalent": 50,
+        "iob": 210
+      },
+      "memory": "256 MB DDR3L",
+      "static_power_baseline_mw": 62.0,
+      "operating_conditions": {
+        "process_corner": "typical",
+        "temperature_grade": "industrial",
+        "ambient_c": 25,
+        "airflow_lfm": 250,
+        "heat_sink": "medium profile"
+      },
+      "toolchain": {
+        "synthesis": "Vivado 2025.2",
+        "implementation": "Vivado 2025.2",
+        "power_analysis": "Vivado 2025.2 XPower Analyzer (SAIF-annotated post-route)",
+        "simulators": [
+          "Icarus Verilog",
+          "Vivado xsim"
+        ]
+      },
+      "notes": "Tek nöron RTL doğrulama için kullanıldı. KV260 gümrükteyken laboratuvardan temin edildi."
+    }
+  },
+  "noronlar": [
+    {
+      "id": "th_lif_exp_2026_04",
+      "donanim_id": "arty_a7_35t",
+      "model_name": "TH-LIF",
+      "model_full_name": "Tunneling-Hazard Leaky Integrate-and-Fire",
+      "variant": "exponential",
+      "version": "1.0",
+      "date_validated": "2026-04",
+      "design": {
+        "hdl": "Verilog",
+        "arithmetic": "Q4.12 signed fixed-point with saturating multiply/add/subtract",
+        "clock_freq_mhz": 50,
+        "clock_period_ns": 20,
+        "cycles_per_step": 6,
+        "step_rate_mhz": 8.33,
+        "fsm_states": 7,
+        "dut_instance_name": "dut",
+        "lookup_tables": [
+          {
+            "name": "softplus",
+            "size": "1024x16",
+            "memory": "BRAM18",
+            "stage": "A (classical hazard)"
+          },
+          {
+            "name": "tunneling",
+            "size": "1024x16",
+            "memory": "BRAM18",
+            "stage": "B (sub-threshold tunneling, exp-based)"
+          }
+        ],
+        "key_dsp_mapping": "beta * V multiply absorbed into single DSP48E1 (V_state_reg merged into DSP AREG)"
+      },
+      "resource_utilization": {
+        "production": {
+          "lut": 171,
+          "ff": 81,
+          "dsp48e1": 1,
+          "bram18": 2,
+          "iob": 6,
+          "lut_pct": 0.82,
+          "ff_pct": 0.19,
+          "dsp_pct": 1.11,
+          "bram_pct": 4.0,
+          "iob_pct": 2.86,
+          "note": "ILA çıkarılmış, mark_debug attribute'ları silinmiş, debug constraint disabled, sentez ve implementation sıfırdan rerun. Deploy konfigürasyonu."
+        },
+        "validation_with_ila": {
+          "lut": 1410,
+          "ff": 2320,
+          "dsp48e1": 1,
+          "bram18": 6,
+          "iob": 6,
+          "note": "ILA aktif (4096-sample capture, 6 probe), JTAG debug hub, BSCAN. Hardware capture için kullanıldı. 4 BRAM ILA trace memory'sine, 2 BRAM neuron hazard LUT'larına ait."
+        },
+        "scaling_analysis": {
+          "max_neurons_lut_budget": 112,
+          "max_neurons_bram_budget": 50,
+          "note": "Shared LUT mimarisinde (birden fazla nöron aynı softplus/tunneling BRAM'ini okur), BRAM darboğazı kalkar ve tasarım LUT/FF'de doğrusal ölçeklenir."
+        }
+      },
+      "timing": {
+        "wns_ns": 8.703,
+        "whs_ns": 0.044,
+        "failing_endpoints": 0,
+        "analysis_type": "post-route",
+        "max_supported_clock_mhz_estimate": "Conservative 50 MHz (positive margin with ILA aktif)"
+      },
+      "power_mw": {
+        "device_static": 62.0,
+        "core_dynamic_production": 1.0,
+        "total_dynamic_validation": 10.0,
+        "total_dynamic_production_upper_bound": 2.0,
+        "total_on_chip_validation": 72.0,
+        "total_on_chip_production_upper_bound": 64.0,
+        "breakdown_validation": {
+          "clocks": 5.0,
+          "block_ram": 2.0,
+          "signals_logic": 1.0,
+          "dsp48e1": 0.5,
+          "io": 2.0,
+          "ila_debug_overhead": 8.0,
+          "ila_capture_core": 6.0,
+          "debug_hub_jtag": 2.0
+        },
+        "breakdown_production": {
+          "clocks_upper": 1.0,
+          "block_ram_upper": 1.0,
+          "signals_logic_upper": 1.0,
+          "dsp48e1_upper": 1.0,
+          "io": 2.0,
+          "neuron_core_estimate": 1.0,
+          "note": "u_neuron Vivado hierarchy table'ında 1 mW resolution threshold'un altına düştü. Hesaplama: dbg_hub (2) + u_ila_0 (6) = 8 mW debug, toplam 10 mW dynamic, neuron <= 2 mW ve ~1 mW civarı."
+        }
+      },
+      "energy": {
+        "energy_per_step_pj": 120,
+        "energy_per_step_pj_conservative_upper": 240,
+        "energy_per_spike_nj": 1.28,
+        "energy_per_spike_nj_conservative_upper": 2.56,
+        "spikes_per_128_step_window": 12,
+        "energy_per_128_step_cycle_nj": 15.4,
+        "calculation_basis": {
+          "f_clk_mhz": 50,
+          "f_step_mhz": 8.33,
+          "P_dyn_production_mw": 1.0,
+          "P_dyn_conservative_upper_mw": 2.0,
+          "formula_step": "E_step = P_dyn / f_step",
+          "formula_spike": "E_spike = (128 * E_step) / spikes_per_128_step"
+        }
+      },
+      "functional_verification": {
+        "bit_exact_cross_validation": true,
+        "references": [
+          {
+            "name": "Python float reference (thlif_step_float)",
+            "type": "software",
+            "spikes_per_cycle": 12
+          },
+          {
+            "name": "Python fixed-point Q4.12 saturating (thlif_step_fxp)",
+            "type": "software",
+            "spikes_per_cycle": 12
+          },
+          {
+            "name": "Icarus Verilog behavioral",
+            "type": "rtl_sim",
+            "spikes_per_cycle": 12,
+            "step_match": "128/128"
+          },
+          {
+            "name": "Vivado xsim behavioral",
+            "type": "rtl_sim",
+            "spikes_per_cycle": 12,
+            "step_match": "128/128"
+          },
+          {
+            "name": "Arty A7-35T hardware (ILA capture)",
+            "type": "hardware",
+            "spikes_per_cycle": 12,
+            "cycles_observed": 4
+          }
+        ],
+        "spike_positions_per_cycle": [
+          15,
+          26,
+          66,
+          69,
+          72,
+          75,
+          78,
+          81,
+          84,
+          87,
+          90,
+          93
+        ],
+        "membrane_state_at_cycle_boundary": {
+          "hex_q4_12": "0xF113",
+          "value": -0.9329
+        },
+        "ila_window_samples": 4096,
+        "ila_window_us": 81.92,
+        "stimulus_pattern": "4-phase periodic square-wave current, 128-step cycle",
+        "drift": "zero numerical drift, zero cycle-to-cycle variance",
+        "phase_3_note": "Cold-start vs limit-cycle offset (Python (10,21) vs hardware (15,26)) sub-threshold fazda. Reset-by-subtraction'ın non-zero steady-state membrane initial condition tutmasından kaynaklanıyor. Numerical discrepancy değil. Phase 3 (supra-threshold) spike pozisyonları her iki durumda da aynı."
+      },
+      "comparison": [
+        {
+          "baseline": "Conv-LSTM",
+          "baseline_params": "300K",
+          "baseline_energy_assumption": "~25 pJ/MAC equivalent on Artix-7",
+          "metric": "temporal energy advantage",
+          "ratio": "344x",
+          "context": "Equivalent inference task. Paper'da muhafazakar tutuldu.",
+          "note": "Bu rakam analytical estimate'lerle tutarlı."
+        }
+      ],
+      "confidence_caveats": {
+        "confidence_level": "High",
+        "confidence_breakdown": {
+          "design_implementation_state": "High",
+          "clock_nodes_activity": "High",
+          "io_nodes_activity": "High",
+          "internal_nodes_activity": "High",
+          "device_models": "High (Production)"
+        },
+        "estimation_method": "SAIF-annotated post-route, post-implementation timing simulation",
+        "saif_simulation_window_us": 100,
+        "saif_design_nets_matched": "1430/4499 (32%)",
+        "saif_unmatched_note": "Eşleşmeyen ~3069 sinyal ağırlıkla ILA trace memory ve BSCAN debug hub internals; bunlar vectorless probabilistic estimate ile besleniyor.",
+        "static_power_note": "62 mW xc7a35ticsg324-1L baseline, neuron-specific değil. ASIC veya Lattice iCE40 gibi düşük-leakage FPGA'da static katkı 10-100x düşer.",
+        "history_note": "İlk run strip_path 'uut' ile yapılmış, DUT instance adı 'dut' olduğu için Design Nets Matched %0 çıkmış ve confidence Medium kalmıştı. strip_path 'dut' olarak düzeltildiğinde %32 eşleşme ile High'a çıktı. Final paper bu sürümü kullanıyor."
+      },
+      "paper_references": [
+        {
+          "manuscript": "TH-LIF SoH paper",
+          "section": "VI. FPGA Implementation",
+          "tables": [
+            "III (Resource)",
+            "IV (Power)",
+            "V (Energy)"
+          ],
+          "status": "in progress"
+        },
+        {
+          "manuscript": "TIB / Nature Computational Science",
+          "section": "Hardware feasibility",
+          "status": "deferred to separate IEEE paper"
+        },
+        {
+          "manuscript": "H-LIF family patent (TURKPATENT)",
+          "section": "Tier 1 hardware data",
+          "status": "filed (TÜRKPATENT 2026/007632, 14.05.2026)"
+        }
+      ],
+      "source_files": {
+        "rtl_top": "th_lif_top.v",
+        "testbench": "tb_th_lif_top.v",
+        "memory_inits": [
+          "softplus_1024x16.mem",
+          "tunneling_1024x16.mem"
+        ],
+        "vivado_project_dir_local": "C:/FPGA_Projects/th_lif_step3/",
+        "saif_file_local": "C:/FPGA_Projects/th_lif_step3/post_impl_activity.saif",
+        "power_report_local": "C:/FPGA_Projects/th_lif_step3/th_lif_power_high.rpt"
+      },
+      "related_artifacts": {
+        "ila_waveform_figure": "fig5_th_lif_hardware.png",
+        "session_notes": "TH-LIF FPGA Uygulaması conversation (16e72ee3, April 2026)"
+      }
+    }
+  ],
+  "_template_yeni_noron": {
+    "_aciklama": "Yeni nöron eklerken bu template'i noronlar array'ine ekle ve doldur. Donanim id'si donanimlar dict'inde mevcut olmalı, yoksa önce oraya ekle.",
+    "id": "string (örn. xx_lif_variant_yyyy_mm)",
+    "donanim_id": "string (donanimlar dict anahtarı)",
+    "model_name": "string",
+    "model_full_name": "string",
+    "variant": "string",
+    "version": "string",
+    "date_validated": "yyyy-mm",
+    "design": {
+      "hdl": "",
+      "arithmetic": "",
+      "clock_freq_mhz": 0,
+      "cycles_per_step": 0,
+      "lookup_tables": []
+    },
+    "resource_utilization": {
+      "production": {},
+      "validation_with_ila": {}
+    },
+    "timing": {
+      "wns_ns": 0,
+      "whs_ns": 0,
+      "failing_endpoints": 0
+    },
+    "power_mw": {
+      "device_static": 0,
+      "core_dynamic_production": 0,
+      "breakdown_production": {}
+    },
+    "energy": {
+      "energy_per_step_pj": 0,
+      "energy_per_spike_nj": 0,
+      "calculation_basis": {}
+    },
+    "functional_verification": {
+      "bit_exact_cross_validation": false,
+      "references": []
+    },
+    "comparison": [],
+    "confidence_caveats": {
+      "confidence_level": "",
+      "estimation_method": ""
+    },
+    "paper_references": [],
+    "source_files": {}
+  }
+}

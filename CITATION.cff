@@ -1,0 +1,60 @@
+cff-version: 1.2.0
+message: "If you use this software or reference the patent in academic work, please cite both this software and the patent application."
+title: "H-LIF Neuron Family — FPGA & CUDA Reference Implementation"
+abstract: >
+  Patent-scoped reference implementation for TÜRKPATENT application 2026/007632.
+  Contains 17 hazard-function-based spiking neuron models (TH-LIF, BH-LIF, their
+  liquid extensions, physics-inspired and architecture-inspired variants), a
+  custom fused CUDA kernel for TH-LIF with analytic natural gradient, and
+  post-route FPGA measurements on a Digilent Arty A7-35T board.
+type: software
+authors:
+  - family-names: Dikmen
+    given-names: "İsmail Can"
+    orcid: "https://orcid.org/0000-0002-7747-7777"
+    affiliation: "İstinye University, Department of Electrical and Electronics Engineering"
+repository-code: "https://github.com/DrCanD/dikmen-hlif-neuron-family-fpga-cuda"
+license: Apache-2.0
+version: "1.0.0"
+date-released: "2026-05-15"
+keywords:
+  - spiking neural networks
+  - neuromorphic computing
+  - hazard function
+  - TH-LIF
+  - L-TH-LIF
+  - FPGA
+  - CUDA
+  - edge AI
+  - patent reference
+
+references:
+  - type: patent
+    title: "Hazard Function-Based Spiking Neuron Family, Liquid Extension, and N-Island Heterogeneous Neuromorphic Processing System"
+    authors:
+      - family-names: Dikmen
+        given-names: "İsmail Can"
+    institution:
+      name: "İstinye University"
+    number: "TÜRKPATENT 2026/007632"
+    date-released: "2026-05-14"
+    status: "filed"
+
+  - type: patent
+    title: "Heterogeneous System-on-Chip with Neuromorphic Watchdog for Battery Management"
+    authors:
+      - family-names: Dikmen
+        given-names: "İsmail Can"
+    institution:
+      name: "İstinye University"
+    number: "TÜRKPATENT 2026/004809"
+    date-released: "2026-03-31"
+    status: "filed"
+
+  - type: software
+    title: "Dikmen Spiking Neuron Families"
+    authors:
+      - family-names: Dikmen
+        given-names: "İsmail Can"
+    repository-code: "https://github.com/DrCanD/dikmen-spiking-neurons"
+    notes: "Parent library; this repo is the patent-scoped subset."
