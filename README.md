@@ -103,18 +103,6 @@ RTL (`th_lif_top.v`, `tb_th_lif_top.v`) and LUT initialization files
 
 ---
 
-## Relationship to companion patent (2026/004809)
-
-The H-LIF family patent (this repo's primary reference, **2026/007632**) covers
-the *neuron mathematics* and the *N-island MoE system* that uses them. A separate
-patent **2026/004809** (filed 31.03.2026) covers the *heterogeneous hybrid SoC*
-architecture where a small TH-LIF watchdog continuously monitors a battery and
-wakes a conventional high-performance core only when a hazard event is detected.
-The two patents address different layers and are complementary; the hybrid SoC
-is one specific application of the neuron family covered here.
-
----
-
 ## Citation
 
 If you use this software or reference the patent in academic work, please cite:
