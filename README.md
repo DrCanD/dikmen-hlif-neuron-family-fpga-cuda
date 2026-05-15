@@ -1,4 +1,6 @@
 # H-LIF Neuron Family — FPGA & CUDA Reference Implementation
+[![DOI](https://zenodo.org/badge/1239588631.svg)](https://doi.org/10.5281/zenodo.20201251)
+
 
 > **Patent reference repository.** This repo contains the patent-scoped subset of the
 > Dikmen spiking neuron library, the corresponding custom CUDA kernel for TH-LIF,
