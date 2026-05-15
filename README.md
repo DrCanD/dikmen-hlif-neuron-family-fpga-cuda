@@ -21,37 +21,11 @@ Heterogeneous Neuromorphic Processing System"* — owner: İstinye University.
 └── examples/          ← minimal usage scripts
 ```
 
-| Layer | Content | Maps to |
-|-------|---------|---------|
-| `hlif_neurons/` | 17 PyTorch neuron classes | Patent claims 1–6 |
-| `cuda/` | 74-line CUDA C kernel + Python autograd wrapper | TH-LIF software side (claim 2) |
-| `fpga/` | post-route resource, power, energy on Arty A7-35T | TH-LIF hardware side (claim 2) |
-
----
-
-## Patent-covered models (17 total)
-
-| Claim | Model | File | Mechanism |
-|-------|-------|------|-----------|
-| Claim 3 (λ₀=0) | Det-LIF | `h_lif.py` | Deterministic Heaviside, baseline |
-| Claim 3 (sigmoid) | Stoch-LIF | `h_lif.py` | Sigmoid with Gaussian noise |
-| Claim 1 single-path | BH-LIF | `h_lif.py` | Barrier-only hazard |
-| **Claim 2 (canonical)** | **TH-LIF** | `h_lif.py` | **Dual-pathway: threshold + barrier (exponential)** |
-| Claim 3 (linear) | TH-LIF-Linear | `h_lif_variants.py` | TH-LIF with linearized hazard |
-| Claim 3 (sigmoid) | TH-LIF-Sigmoid | `h_lif_variants.py` | TH-LIF with sigmoid hazard |
-| Claim 5 | DB-LIF | `h_lif.py` | Double-barrier bistable |
-| Claim 5 | RT-LIF | `h_lif.py` | Resonant tunneling band-pass |
-| Claim 5 | Thermal-LIF | `h_lif.py` | Arrhenius thermal kinetics |
-| Claim 5 | Spin-LIF | `h_lif_extensions.py` | Magnetic spin precession |
-| Claim 5 | Piezo-LIF | `h_lif_extensions.py` | Piezoelectric stress |
-| Claim 6 | CH-LIF | `h_lif.py` | Cross-coupled lateral modulation |
-| Claim 6 | MoE-LIF | `h_lif.py` | Mixture-of-experts hazard |
-| Claim 6 | Att-LIF | `h_lif.py` | Attention-modulated barrier |
-| Claim 6 | HyperNet-LIF | `h_lif.py` | Meta-network barrier parameters |
-| Claim 4 | L-TH-LIF | `liquid.py` | State-dependent TH-LIF |
-| Claim 4 | L-BH-LIF | `liquid.py` | State-dependent BH-LIF |
-
-See `docs/claim_mapping.md` for the full claim-to-code mapping.
+| Layer | Content | 
+|-------|---------|
+| `hlif_neurons/` | 17 PyTorch neuron classes |
+| `cuda/` | 74-line CUDA C kernel + Python autograd wrapper |
+| `fpga/` | post-route resource, power, energy on Arty A7-35T |
 
 ---
 
