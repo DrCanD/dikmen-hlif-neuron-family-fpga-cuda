@@ -8,10 +8,6 @@
 *"Hazard Function-Based Spiking Neuron Family, Liquid Extension, and N-Island
 Heterogeneous Neuromorphic Processing System"* — owner: İstinye University.
 
-For the full 39-model spiking neuron library (including MS-IF, I-LIF, F-LIF, K-LIF,
-W-LIF, C-LIF families that fall outside this patent's scope), see
-[DrCanD/dikmen-spiking-neurons](https://github.com/DrCanD/dikmen-spiking-neurons).
-
 ---
 
 ## What is here
