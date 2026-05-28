@@ -161,7 +161,7 @@ realization (TH-LIF watchdog + conventional core) for battery management.
 
 ---
 
-## Independent system-level metric — TNS (Temporal Neutralization Score)
+## Independent system-level metric — TNS (Temporal Necessity Score)
 
 A normalized score `TNS ∈ [0, 1]` was introduced in the patent description to
 quantify how much each neuron model relies on temporal information vs.
